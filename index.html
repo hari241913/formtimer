@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Form with Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #timer {
+            font-size: 24px;
+            margin: 20px;
+            color: red;
+        }
+        iframe {
+            width: 80%;
+            height: 80vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Complete the Form Below</h1>
+    <div id="timer">Time Remaining: 10:00</div>
+    <iframe src="https://docs.google.com/forms/d/1v8j8Ldd-LOcZGWKwRkj1UeCrpmD4NRLuAopuRqPYzVA/viewform"></iframe>
+
+    <script>
+        let timerDuration = 105 * 60; // 10 minutes in seconds
+        const timerElement = document.getElementById("timer");
+
+        function updateTimer() {
+            const minutes = Math.floor(timerDuration / 60);
+            const seconds = timerDuration % 60;
+            timerElement.textContent = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timerDuration--;
+
+            if (timerDuration < 0) {
+                alert("Time is up! Submitting the form automatically.");
+                document.querySelector("iframe").src = ""; // Replace with form submission logic if applicable
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>

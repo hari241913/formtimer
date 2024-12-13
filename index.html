@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Form with Timer</title>
+    <title>Google Form with Persistent Timer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,22 +29,45 @@
     <iframe src="https://docs.google.com/forms/d/1v8j8Ldd-LOcZGWKwRkj1UeCrpmD4NRLuAopuRqPYzVA/viewform"></iframe>
 
     <script>
-        let timerDuration = 105 * 60; // 10 minutes in seconds
+        const TIMER_KEY = "form_timer"; // Key for localStorage
+        const initialTime = 10 * 60; // Timer duration in seconds (10 minutes)
         const timerElement = document.getElementById("timer");
 
-        function updateTimer() {
-            const minutes = Math.floor(timerDuration / 60);
-            const seconds = timerDuration % 60;
-            timerElement.textContent = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            timerDuration--;
+        // Get the remaining time from localStorage or set it to the initial time
+        let remainingTime = localStorage.getItem(TIMER_KEY) 
+            ? parseInt(localStorage.getItem(TIMER_KEY)) 
+            : initialTime;
 
-            if (timerDuration < 0) {
+        function updateTimer() {
+            if (remainingTime <= 0) {
                 alert("Time is up! Submitting the form automatically.");
                 document.querySelector("iframe").src = ""; // Replace with form submission logic if applicable
+                return;
             }
+
+            // Update the displayed timer
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            timerElement.textContent = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            // Decrement the remaining time and save it in localStorage
+            remainingTime--;
+            localStorage.setItem(TIMER_KEY, remainingTime);
         }
 
-        setInterval(updateTimer, 1000);
+        // Clear the timer when time is up
+        function clearTimer() {
+            localStorage.removeItem(TIMER_KEY);
+        }
+
+        // Start the timer
+        setInterval(() => {
+            if (remainingTime > 0) {
+                updateTimer();
+            } else {
+                clearTimer();
+            }
+        }, 1000);
     </script>
 </body>
 </html>
